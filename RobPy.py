@@ -321,7 +321,11 @@ def __distancia_entre_retas_p(po1: np.ndarray, po2: np.ndarray, vs: np.ndarray) 
     :param vs: Vetor direção de ambas as retas
     :return: distância entre as retas (float, não negativo)
     """
-    pass
+    checa_vetor3(vs)
+    checa_vetor3(po1)
+    checa_vetor3(po2)
+    v1 = po1 - po2
+    return norma_vetor(v1 - proj_vetores(v1, vs))
 
 
 def distancia_entre_retas(po1: np.ndarray, vs1: np.ndarray, po2: np.ndarray, vs2: np.ndarray, angtol=1e-3) -> float:
@@ -335,8 +339,18 @@ def distancia_entre_retas(po1: np.ndarray, vs1: np.ndarray, po2: np.ndarray, vs2
     :param angtol: Tolerância de ângulo entre as retas para decidir se são paralelas
     :return: Distância entre as retas (float, positivo ou nulo)
     """
-    pass
+    checa_vetor3(vs1)
+    checa_vetor3(vs2)
+    checa_vetor3(po1)
+    checa_vetor3(po2)
+    if angtol < 0:
+        raise ValueError('A tolerancia angular deve ser maior que 0')
 
+    ang = np.abs(ang_vetores(vs1, vs2))
+    if ang < angtol or np.abs(ang - np.pi) < angtol:
+        return __distancia_entre_retas_p(po1=po1, po2=po2, vs=vs1)
+    else:
+        return __distancia_entre_retas_np(po1=po1, po2=po2, vs1=vs1, vs2=vs2)
 
 def __eixo_reta_12_np(po1: np.ndarray, vs1: np.ndarray, po2: np.ndarray, vs2: np.ndarray) -> float:
     """
